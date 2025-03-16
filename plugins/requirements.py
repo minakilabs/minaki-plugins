@@ -46,4 +46,4 @@ def register_commands(cli):
     cli.add_command(requirements)
     requirements.add_command(install)
     requirements.add_command(uninstall)
-    requirements.add_command(list)x
+    requirements.add_command(list)
