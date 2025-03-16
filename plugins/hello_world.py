@@ -1,18 +1,10 @@
-class HelloWorldPlugin:
-    """A simple Hello World plugin for Minaki."""
-    
-    def before_command(self, command):
-        print("🌍 Hello from the Hello World Plugin!")
-        return command
+import click
 
-    def after_command(self, command, output):
-        return output  # No changes to the command output
+@click.command(name="hello_world")
+def hello_world():
+    """Prints Hello from Minaki."""
+    click.echo("👋 Hello from Minaki!")
 
-    def register_commands(self, cli):
-        """Register additional CLI commands."""
-        @cli.command()
-        def hello():
-            """Prints Hello from Minaki."""
-            print("👋 Hello from Minaki!")
-
-plugin = HelloWorldPlugin()
+def register_commands(cli):
+    """Register the 'hello_world' command inside Minaki CLI."""
+    cli.add_command(hello_world)

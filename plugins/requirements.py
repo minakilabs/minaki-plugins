@@ -7,43 +7,40 @@ def requirements():
     """Manage dependencies for Minaki plugins."""
     pass
 
-@click.command()
-@click.argument("packages", nargs=-1)
-def install(packages):
+@click.command(name="install")
+@click.argument("packages", nargs=-1, required=True)
+def install_packages(packages):
     """Install dependencies using pip."""
-    if not packages:
-        click.echo("❌ No package specified. Use: minaki requirements install <package>")
-        return
     try:
         subprocess.run([sys.executable, "-m", "pip", "install"] + list(packages), check=True)
         click.echo(f"✅ Installed: {', '.join(packages)}")
     except subprocess.CalledProcessError as e:
         click.echo(f"⚠️ Failed to install: {e}")
 
-@click.command()
-@click.argument("packages", nargs=-1)
-def uninstall(packages):
+@click.command(name="uninstall")
+@click.argument("packages", nargs=-1, required=True)
+def uninstall_packages(packages):
     """Uninstall dependencies using pip."""
-    if not packages:
-        click.echo("❌ No package specified. Use: minaki requirements uninstall <package>")
-        return
     try:
         subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y"] + list(packages), check=True)
         click.echo(f"✅ Uninstalled: {', '.join(packages)}")
     except subprocess.CalledProcessError as e:
         click.echo(f"⚠️ Failed to uninstall: {e}")
 
-@click.command()
-def list():
+@click.command(name="list")
+def list_packages():
     """List installed Python packages."""
     try:
-        subprocess.run([sys.executable, "-m", "pip", "list"])
+        subprocess.run([sys.executable, "-m", "pip", "list"], check=True)
     except subprocess.CalledProcessError as e:
         click.echo(f"⚠️ Failed to list packages: {e}")
 
-# Register plugin
-def register_commands(cli):
-    cli.add_command(requirements)
-    requirements.add_command(install)
-    requirements.add_command(uninstall)
-    requirements.add_command(list)
+# ✅ Register the commands properly
+requirements.add_command(install_packages)
+requirements.add_command(uninstall_packages)
+requirements.add_command(list_packages)
+
+# ✅ Register the plugin inside Minaki CLI
+def register_commands(app):
+    """Register the requirements plugin into Minaki CLI"""
+    app.add_command(requirements)  # Ensures it is correctly loaded
